@@ -7,8 +7,12 @@ public class Vec2 {
         y = scalar;
     }
 
+    public Vec2(float inX, float inY) {
+        x = inX;
+        y = inY;
+    }
+
     float x;
     float y;
-
 
 }
