@@ -1,3 +1,3 @@
 #KittyEngine
 
-<b>Currenty, it only does rendering</b>
+<b>Currenty, it only does rendering and input</b>

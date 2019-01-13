@@ -1,9 +1,0 @@
-#version 300 es
-
-attribute vec2 vPosition;
-attribute vec4 vColor;
-out vec4 f_color;
-void main() {
-   f_color = vColor;
-   gl_Position = vec4(vPosition.xy, 0.f, 1.f);
-}

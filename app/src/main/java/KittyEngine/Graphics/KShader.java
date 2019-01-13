@@ -1,4 +1,4 @@
-package com.example.israel.kittyengine;
+package KittyEngine.Graphics;
 
 import android.opengl.GLES31;
 import android.util.Log;
@@ -15,7 +15,7 @@ public class KShader {
         GLES31.glGetShaderiv(vertexShaderId, GLES31.GL_COMPILE_STATUS, result, 0);
         if (result[0] == 0) { // error compile
             String errorLog = GLES31.glGetShaderInfoLog(vertexShaderId);
-            Log.i("MyTag", errorLog);
+            Log.w("KittyLog", "Vertex shader compile error \n" + errorLog);
 
             GLES31.glDeleteShader(vertexShaderId);
             return;
@@ -28,7 +28,7 @@ public class KShader {
         GLES31.glGetShaderiv(fragmentShaderId, GLES31.GL_COMPILE_STATUS, result, 0);
         if (result[0] == 0) { // error compile
             String errorLog = GLES31.glGetShaderInfoLog(fragmentShaderId);
-            Log.i("MyTag", errorLog);
+            Log.w("KittyLog", "Fragment shader compile error \n" +  errorLog);
 
             GLES31.glDeleteShader(vertexShaderId);
             GLES31.glDeleteShader(fragmentShaderId);
@@ -59,6 +59,11 @@ public class KShader {
 
     static public void unuse() {
         GLES31.glUseProgram(0);
+    }
+
+    public void setInt(String name, int value) {
+        int i = GLES31.glGetUniformLocation(m_programId, name);
+        GLES31.glUniform1i(i, value);
     }
 
     public void setVec4(String name, float[] vec4) {

@@ -1,6 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        config_debug_key {
+        }
+    }
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.example.israel.kittyengine"
@@ -20,11 +24,25 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        debug {
+            debuggable true
+        }
+        debug_release {
+            debuggable false
+            jniDebuggable false
+            renderscriptDebuggable false
+            renderscriptOptimLevel 3
+            minifyEnabled false
+            zipAlignEnabled true
+            signingConfig signingConfigs.config_debug_key
+        }
     }
     externalNativeBuild {
         cmake {
             path "CMakeLists.txt"
         }
+    }
+    productFlavors {
     }
 }
 
