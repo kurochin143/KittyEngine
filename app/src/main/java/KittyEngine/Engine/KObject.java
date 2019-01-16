@@ -22,7 +22,7 @@ public class KObject {
     public void destroy() {
         setUpdateEnabled(false);
         m_game.m_objects.removeSwap(m_gameObjectsIndex);
-        if (m_gameObjectsIndex > m_game.m_objects.size()) {
+        if (m_gameObjectsIndex < m_game.m_objects.size()) {
             m_game.m_objects.get(m_gameObjectsIndex).m_gameObjectsIndex = m_gameObjectsIndex;
         }
 
@@ -46,6 +46,8 @@ public class KObject {
         if (bSelfUpdateEnabled == bUpdateEnabled) {
             return;
         }
+
+        // allows disabling and enabling update during update
 
         if (bUpdateEnabled) {
             m_updateEnabledIndex = m_game.m_updateEnabledObjects.size();

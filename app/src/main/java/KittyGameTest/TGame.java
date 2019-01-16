@@ -3,12 +3,16 @@ package KittyGameTest;
 import android.util.Log;
 import android.view.MotionEvent;
 
+import com.example.israel.kittyengine.R;
+
 import KittyEngine.Container.KArrayList;
 import KittyEngine.Engine.KEngine;
 import KittyEngine.Engine.KGame;
 import KittyEngine.Engine.KInput;
 import KittyEngine.Engine.KObject;
 import KittyEngine.Graphics.KHUDRenderer;
+import KittyEngine.Graphics.KSprite;
+import KittyEngine.Graphics.KTexture;
 import KittyEngine.Math.KVec2;
 import KittyEngine.Math.KVec4;
 
@@ -34,6 +38,9 @@ public class TGame extends KGame {
                 }
             }
         });
+
+        KSprite sprite = new KSprite();
+        sprite.setTexture(KTexture.getTexture("textures/awesomeface.png"));
     }
 
     KVec2 currentP = new KVec2(100.f, 100.f);

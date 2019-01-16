@@ -8,8 +8,16 @@ public class KMath {
     public static final float INV_PI = 0.31830988618f;
     public static final float HALF_PI = 1.57079632679f;
 
+    public static float sqrt(float val) {
+        return (float)Math.sqrt(val);
+    }
+
     public static float invSqrt(float val) {
         return 1.0f / (float)Math.sqrt(val);
+    }
+
+    public static float square(float val) {
+        return val*val;
     }
 
     public static float sin(float radians) {

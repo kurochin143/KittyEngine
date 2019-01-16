@@ -2,6 +2,17 @@ package KittyEngine.Math;
 
 public class KVec2 {
 
+    /** default constructor */
+    public KVec2() {
+
+    }
+
+    /** copy constructor */
+    public KVec2(KVec2 copy) {
+        x = copy.x;
+        y = copy.y;
+    }
+
     public KVec2(float scalar) {
         x = scalar;
         y = scalar;
@@ -17,11 +28,16 @@ public class KVec2 {
 
     public static final KVec2 ZERO = new KVec2(0.f);
 
+    public void set(KVec2 v) {
+        this.x = v.x;
+        this.y = v.y;
+    }
+
     public KVec2 add(KVec2 v) {
         return new KVec2(this.x + v.x, this.y + v.y);
     }
 
-    public KVec2 min(KVec2 v) {
+    public KVec2 sub(KVec2 v) {
         return new KVec2(this.x - v.x, this.y - v.y);
     }
 
@@ -38,7 +54,7 @@ public class KVec2 {
         return new KVec2(this.x + scalar, this.y + scalar);
     }
 
-    public KVec2 min(float scalar) {
+    public KVec2 sub(float scalar) {
         return new KVec2(this.x - scalar, this.y - scalar);
     }
 
@@ -49,6 +65,46 @@ public class KVec2 {
     public KVec2 div(float scalar) {
         // @TODO should we try this for divide 0?
         return new KVec2(this.x / scalar, this.y / scalar);
+    }
+
+    public void addSet(KVec2 v) {
+        this.x += v.x;
+        this.y += v.y;
+    }
+
+    public void subSet(KVec2 v) {
+        this.x -= v.x;
+        this.y -= v.y;
+    }
+
+    public void mulSet(KVec2 v) {
+        this.x *= v.x;
+        this.y *= v.y;
+    }
+
+    public void divSet(KVec2 v) {
+        this.x /= v.x;
+        this.y /= v.y;
+    }
+
+    public void addSet(float scalar) {
+        this.x += scalar;
+        this.y += scalar;
+    }
+
+    public void subSet(float scalar) {
+        this.x -= scalar;
+        this.y -= scalar;
+    }
+
+    public void mulSet(float scalar) {
+        this.x *= scalar;
+        this.y *= scalar;
+    }
+
+    public void divSet(float scalar) {
+        this.x /= scalar;
+        this.y /= scalar;
     }
 
     public float[] getAsFloatArray() {
@@ -72,6 +128,42 @@ public class KVec2 {
 
         float scale = KMath.invSqrt(squareSum);
         return new KVec2(x*scale, y*scale);
+    }
+
+    /**
+     * Get a rotated vector around the z-axis
+     */
+    public KVec2 getRotated(float angle) {
+        float[] sinCos = KMath.sinCos(angle);
+        float sn = sinCos[0];
+        float cs = sinCos[1];
+        return new KVec2(x*cs - y*sn, x*sn + y*cs);
+    }
+
+    /**
+     * Get a rotated vector around the z-axis inverse
+     */
+    public KVec2 getRotatedInverse(float angle) {
+        float[] sinCos = KMath.sinCos(angle);
+        float sn = sinCos[0];
+        float cs = sinCos[1];
+        return new KVec2(x*cs + y*sn, -x*sn + y*cs);
+    }
+
+    public float lengthSquared() {
+        return x*x + y*y;
+    }
+
+    public float length() {
+        return KMath.sqrt(lengthSquared());
+    }
+
+    public float distanceSquared(KVec2 v) {
+        return KMath.square(v.x - this.x) + KMath.square(v.y - this.y);
+    }
+
+    public float distance(KVec2 v) {
+        return KMath.sqrt(distanceSquared(v));
     }
 
 }

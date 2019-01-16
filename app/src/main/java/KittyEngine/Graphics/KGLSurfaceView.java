@@ -20,7 +20,7 @@ public class KGLSurfaceView extends GLSurfaceView {
 
         setEGLContextClientVersion(3); // 3.1
 
-        m_renderer = new KRenderer();
+        m_renderer = new KRenderer(context);
 
         setRenderer(m_renderer);
 
@@ -37,6 +37,10 @@ public class KGLSurfaceView extends GLSurfaceView {
 
     @Override
     public void requestRender() {
+        if (!m_renderer.m_bDrawFrameFinished.get()) {
+            return;
+        }
+
         m_renderer.m_bDrawFrameFinished.set(false);
         super.requestRender();
     }

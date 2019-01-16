@@ -3,13 +3,13 @@ package KittyEngine.Engine;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
 
 import java.util.Random;
 
 import KittyEngine.Container.KArrayList;
 import KittyEngine.Graphics.KGLSurfaceView;
 import KittyEngine.Graphics.KHUDRenderer;
+import KittyEngine.Graphics.KTexture;
 
 public class KEngine {
 
@@ -25,20 +25,21 @@ public class KEngine {
 
         m_input = new KInput();
 
-        m_GLView = new KGLSurfaceView(activity, m_input);
-        activity.setContentView(m_GLView);
+        m_GLSurfaceView = new KGLSurfaceView(activity, m_input);
+        activity.setContentView(m_GLSurfaceView);
     }
 
     private static KEngine sm_engine;
     private EngineThread m_engineThread;
 
     private KInput m_input;
-    private KGLSurfaceView m_GLView;
+    private KGLSurfaceView m_GLSurfaceView;
 
     private boolean m_bRunning;
 
     private float m_targetFps = 120.f;
     private float m_targetMilliSecondsPerFrame = 1000.f / m_targetFps;
+    private long m_targetNanoSecondsPerFrame = (long)((1.f / m_targetFps) * 1000000000);
     private int m_fps;
 
     private KArrayList<KGame> m_games = new KArrayList<>();
@@ -55,12 +56,12 @@ public class KEngine {
         return m_input;
     }
 
-    public View getView() {
-        return m_GLView;
+    public KGLSurfaceView getGLSurfaceView() {
+        return m_GLSurfaceView;
     }
 
     public KHUDRenderer getHUDRenderer() {
-        return m_GLView.getRenderer().getHUDRenderer();
+        return m_GLSurfaceView.getRenderer().getHUDRenderer();
     }
 
     public boolean isRunning() {
@@ -123,17 +124,14 @@ public class KEngine {
 
             Log.i("KittyLog", "KEngine started");
 
-            // stop here until KGLSurfaceView.onSurfaceCreated is finished
-            while (!m_GLView.isRenderFinished()) {
+            // wait until the first draw call is finished
+            while (!m_GLSurfaceView.isRenderFinished()) {
 
             }
 
             m_bRunning = true;
 
-            // initialize random seed based on current time
-            Random random = new Random();
-            random.setSeed(SystemClock.elapsedRealtime());
-
+            // initialize all games
             for (KGame game : m_games) {
                 game.onEngineStarted();
             }
@@ -169,7 +167,7 @@ public class KEngine {
 
                 float deltaSeconds = deltaMilliSeconds * 0.001f;
 
-                // set this to max because it will be doing heavy stuff
+                // set this to max because this thread will be doing heavy stuff
                 m_engineThread.setPriority(MAX_PRIORITY);
                 // input
                 m_input.dispatch();
@@ -185,15 +183,17 @@ public class KEngine {
                     }
                 }
 
-                // lower priority because it will not be doing anything anyway
+                /** game objects must be immutable at this point */
+
+                // lower priority because this thread will not be doing anything anyway
                 m_engineThread.setPriority(MIN_PRIORITY);
                 // render
-                m_GLView.requestRender();
+                m_GLSurfaceView.requestRender();
                 // wait until renderer has finished drawing
-                while (!m_GLView.isRenderFinished()) {
+                while (!m_GLSurfaceView.isRenderFinished()) {
 
                 }
-                // set back to normal priority because it will be doing some stuff
+                // set back to normal priority because this thread will be doing time calculation
                 m_engineThread.setPriority(NORM_PRIORITY);
             }
 
@@ -207,10 +207,11 @@ public class KEngine {
 
         public void logFrame(String name) {
             frames++;
-            if(System.nanoTime() - startTime >= 1000000000) {
+            long currentTime = System.nanoTime();
+            if(currentTime - startTime >= 1000000000) {
                 Log.d("KittyLog", name + "fps: " + frames);
                 frames = 0;
-                startTime = System.nanoTime();
+                startTime = currentTime;
             }
         }
     }

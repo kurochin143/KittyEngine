@@ -8,9 +8,11 @@ import KittyEngine.Container.KArrayList;
  */
 public abstract class KGame {
 
+    public KGame() {
+    }
+
     KArrayList<KObject> m_objects = new KArrayList<>();
     KArrayList<KObject> m_updateEnabledObjects = new KArrayList<>();
-    KInput m_Input;
 
     public void onEngineStarted() {
 
@@ -21,7 +23,7 @@ public abstract class KGame {
     }
 
     private void updateObjects(float deltaSeconds) {
-        for (int i = m_objects.lastIndex(); i != -1; --i) {
+        for (int i = m_updateEnabledObjects.lastIndex(); i != -1; --i) {
             KObject object = m_objects.get(i);
             if (object != null) {
                 object.update(deltaSeconds);

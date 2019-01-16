@@ -15,11 +15,10 @@ import glm.GLM;
 // @TODO draw concave polygon
 // @TODO draw AABB
 // @TODO draw string. when font is implemented
-
 public class KHUDRenderer {
 
-    KHUDRenderer() {
-        m_triangleRenderer = new KTriangleRenderer();
+    KHUDRenderer(KRenderer renderer) {
+        m_triangleRenderer = new KTriangleRenderer(renderer);
     }
 
     private KTriangleRenderer m_triangleRenderer;
@@ -30,7 +29,7 @@ public class KHUDRenderer {
 
     /** Draw line on the screen for one frame*/
     public void drawLine(KVec2 screenPosition1, KVec2 screenPosition2, KVec4 color, float thickness) {
-        KVec2 normalizedVector = screenPosition2.min(screenPosition1).getNormalized();
+        KVec2 normalizedVector = screenPosition2.sub(screenPosition1).getNormalized();
         KVec2 normal = new KVec2(normalizedVector.y, -normalizedVector.x);
 
         KVec2 halfNormal = normal.mul(thickness * 0.5f);
@@ -45,11 +44,11 @@ public class KHUDRenderer {
         triangle1[1] = vertexPos; // 2nd t1-2
         triangle2[0] = vertexPos; // 4th t2-1
 
-        vertexPos = screenPosition1.min(halfNormal);
+        vertexPos = screenPosition1.sub(halfNormal);
         triangle1[2] = vertexPos; // 3rd t1-3
         triangle2[1] = vertexPos; // 5th t2-2
 
-        vertexPos = screenPosition2.min(halfNormal);
+        vertexPos = screenPosition2.sub(halfNormal);
         triangle2[2] = vertexPos; // 6th t2-3
 
         m_triangleRenderer.addTriangle(triangle1, color);
@@ -80,10 +79,10 @@ public class KHUDRenderer {
             KVec2 centroid = KVec2.ZERO;
             for (int i = 0; i < screenVertexPositions.length; ++i)
             {
-                centroid = centroid.add(screenVertexPositions[i]);
+                centroid.addSet(screenVertexPositions[i]);
             }
 
-            centroid = centroid.div(screenVertexPositions.length); // average location of all the vertices
+            centroid.divSet(screenVertexPositions.length); // average location of all the vertices
 
             int lastIndex = screenVertexPositions.length - 1;
             KVec2[] triangle = new KVec2[3];
@@ -162,7 +161,9 @@ public class KHUDRenderer {
     // triangle renderer
     private class KTriangleRenderer {
 
-        public KTriangleRenderer() {
+        public KTriangleRenderer(KRenderer renderer) {
+            m_renderer = renderer;
+
             m_shader = new KShader(vertexShaderCode, fragmentShaderCode);
 
             m_vertexBuffer = new KVertexBuffer();
@@ -213,6 +214,7 @@ public class KHUDRenderer {
 //                        "  gl_FragColor = vColor;" +
 //                        "}";
 
+        private KRenderer m_renderer;
         private KShader m_shader;
         private KVertexBuffer m_vertexBuffer;
 
@@ -280,12 +282,8 @@ public class KHUDRenderer {
             }
             // add 3 vertices
             for (int i = 0; i < TRIANGLE_VERTEX_NUM; ++i) {
-                float[] screenVertexPosition = new float[4];
-                screenVertexPosition[0] = screenVertexPositions[i].x;
-                screenVertexPosition[1] = screenVertexPositions[i].y;
-                screenVertexPosition[2] = 0.f;
-                screenVertexPosition[3] = 1.f;
-                float[] projectedVertexPosition = GLM.mat4MulVec4(KRenderer.getScreenProjection(), screenVertexPosition);
+                float[] screenVertexPosition = new float[] {screenVertexPositions[i].x, screenVertexPositions[i].y, 0.f, 1.f};
+                float[] projectedVertexPosition = GLM.mat4MulVec4(m_renderer.getScreenProjection().getArray(), screenVertexPosition);
 
                 int vertexDataFirstIndex = m_vertexNum * VERTEX_DATA_NUM;
                 m_vertexDataF.put(vertexDataFirstIndex, projectedVertexPosition[0]);

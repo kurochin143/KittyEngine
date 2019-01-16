@@ -1,8 +1,21 @@
 package KittyEngine.Container;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class KArrayList<E> extends ArrayList<E> {
+
+    public KArrayList() {
+        super();
+    }
+
+    public KArrayList(int initialCapacity) {
+        super(initialCapacity);
+    }
+
+    public KArrayList(Collection<? extends E> c) {
+        super(c);
+    }
 
     public int lastIndex() {
         return size() - 1;

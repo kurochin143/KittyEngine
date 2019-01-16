@@ -4,6 +4,7 @@ import KittyEngine.Engine.KGame;
 import KittyEngine.Engine.KObject;
 import KittyEngine.Math.KVec2;
 
+// @TODO
 public class KSceneObject extends KObject {
 
     public KSceneObject(KGame game) {
