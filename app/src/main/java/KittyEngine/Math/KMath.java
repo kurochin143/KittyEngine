@@ -68,4 +68,63 @@ public class KMath {
 
         return new float[] {sin, cos};
     }
+
+    /** clamp x to -y,y */
+    public static float mod(float x, float y)
+    {
+        if (Math.abs(y) <= SMALL_NUM)
+        {
+            return 0.f;
+        }
+
+        final float quotient = (float)(int)(x / y);
+        float intPortion = y * quotient;
+
+        if (Math.abs(intPortion) > Math.abs(x))
+        {
+            intPortion = x;
+        }
+
+        return x - intPortion;
+    }
+
+    /** Clamp degree angle within 0 to 360 */
+    public static float clampAxisDeg(float angle)
+    {
+        if (angle >= 0.f && angle <= 360.f)
+        {
+            return angle;
+        }
+
+        // -360 to 360
+        angle = mod(angle, 360.f);
+
+        // 0 to 360
+        if (angle < 0.f)
+        {
+            angle += 360.f;
+        }
+
+        return angle;
+    }
+
+    /** Clamp radian angle within 0 to 2*PI */
+    public static float clampAxisRad(float angle)
+    {
+        if (angle >= 0.f && angle <= PI2)
+        {
+            return angle;
+        }
+
+        // -2*PI to 2*PI
+        angle = mod(angle, PI2);
+
+        // 0 to 2*PI
+        if (angle < 0.f)
+        {
+            angle += PI2;
+        }
+
+        return angle;
+    }
 }

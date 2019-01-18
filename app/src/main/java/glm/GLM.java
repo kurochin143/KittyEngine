@@ -31,6 +31,9 @@ public class GLM {
      * */
     public static native float[] lookAtRH(float[] eye, float[] center, float[] up);
 
+    public static native float[] rotateZ(float[] inMat4, float inAngle);
+
     // just for fun. object conversion is hard stick with array or primitives. boy is this inefficient
     public static native KVec4 mat4MulVec4v(Matrix4f inMat4, KVec4 inVec4);
+
 }

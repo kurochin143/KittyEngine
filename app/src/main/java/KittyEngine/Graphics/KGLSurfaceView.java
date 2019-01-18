@@ -2,8 +2,6 @@ package KittyEngine.Graphics;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;
-import android.support.annotation.MainThread;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 

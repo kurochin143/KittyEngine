@@ -7,13 +7,14 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
+import KittyEngine.Container.KArrayList;
+import KittyEngine.Math.KAABB;
 import KittyEngine.Math.KMath;
 import KittyEngine.Math.KVec2;
 import KittyEngine.Math.KVec4;
 import glm.GLM;
 
 // @TODO draw concave polygon
-// @TODO draw AABB
 // @TODO draw string. when font is implemented
 public class KHUDRenderer {
 
@@ -156,6 +157,16 @@ public class KHUDRenderer {
                 drawLine(new KVec2(x1, y1), new KVec2(x2, y2), color, unfilledThickness);
             }
         }
+    }
+
+    public void drawAABB(KAABB aabb, KVec4 color, boolean bFilled, float unfilledThickness) {
+        KVec2[] vertices = new KVec2[4];
+        vertices[0] = new KVec2(aabb.lowerBound);
+        vertices[1] = new KVec2(aabb.upperBound.x, aabb.lowerBound.y);
+        vertices[2] = new KVec2(aabb.upperBound);
+        vertices[3] = new KVec2(aabb.lowerBound.x, aabb.upperBound.y);
+
+        drawConvexPolygon(vertices, color, bFilled, unfilledThickness);
     }
 
     // triangle renderer

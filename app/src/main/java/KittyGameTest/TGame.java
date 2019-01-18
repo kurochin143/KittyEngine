@@ -12,7 +12,9 @@ import KittyEngine.Engine.KInput;
 import KittyEngine.Engine.KObject;
 import KittyEngine.Graphics.KHUDRenderer;
 import KittyEngine.Graphics.KSprite;
+import KittyEngine.Graphics.KSpriteObject;
 import KittyEngine.Graphics.KTexture;
+import KittyEngine.Math.KMath;
 import KittyEngine.Math.KVec2;
 import KittyEngine.Math.KVec4;
 
@@ -39,11 +41,25 @@ public class TGame extends KGame {
             }
         });
 
-        KSprite sprite = new KSprite();
-        sprite.setTexture(KTexture.getTexture("textures/awesomeface.png"));
+        KTexture awesomeface = KTexture.getTexture("textures/awesomeface.png");
+        KTexture wall = KTexture.getTexture("textures/etc/wall.jpg");
+        spriteObject = new KSpriteObject(this);
+        spriteObject.sprite.setTexture(awesomeface);
+        spriteObject.setWorldPosition(new KVec2(-100.f, 0.f));
+        spriteObject.setWorldAngle((float)Math.toRadians(180.f));
+        spriteObject.sprite.setShouldDrawScreenBounds(true);
+
+        spriteObject2 = new KSpriteObject(this);
+        spriteObject2.sprite.setTexture(wall);
+        spriteObject2.sprite.setShouldDrawScreenBounds(true);
+
+        spriteObject2.attach(spriteObject, new KVec2(100.f, 100.f), 0.f, true);
     }
 
     KVec2 currentP = new KVec2(100.f, 100.f);
+    float currentA;
+    KSpriteObject spriteObject;
+    KSpriteObject spriteObject2;
 
     class Circle {
         float duration;
@@ -76,7 +92,11 @@ public class TGame extends KGame {
             }
         }
 
-        currentP = currentP.add(new KVec2(-1.f, 1.f));
+        currentP = currentP.add(new KVec2(0.f, 0.f));
+        spriteObject.setWorldPosition(currentP);
+        currentA += Math.toRadians(10.f) * deltaSeconds;
+        spriteObject.setWorldAngle(currentA);
+
         HUDRenderer.drawCircle(currentP, 100.f, new KVec4(1.f, 1.f, 0.f, 1.f), true, 60, 1.f);
         HUDRenderer.drawCircle(new KVec2(200.f, 100.f), 200.f, new KVec4(0.f, 0.f, 1.f, 1.f), false, 60, 1.f);
 

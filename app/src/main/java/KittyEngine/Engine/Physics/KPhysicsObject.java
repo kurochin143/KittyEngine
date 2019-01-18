@@ -1,4 +1,4 @@
-package KittyEngine.Object;
+package KittyEngine.Engine.Physics;
 
 import KittyEngine.Engine.KGame;
 
@@ -7,6 +7,10 @@ public class KPhysicsObject extends KSceneObject {
 
     public KPhysicsObject(KGame game) {
         super(game);
+    }
+
+    void physicsTransformUpdate() {
+
     }
 
 }

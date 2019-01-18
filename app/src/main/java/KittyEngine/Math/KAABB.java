@@ -26,6 +26,11 @@ public class KAABB {
     public KVec2 upperBound = new KVec2();
     public KVec2 lowerBound = new KVec2();
 
+    public void set(KVec2 v) {
+        upperBound.set(v);
+        lowerBound.set(v);
+    }
+
     public KVec2 getCenter() { return upperBound.add(lowerBound).mul(0.5f); }
     public KVec2 getExtent() { return upperBound.sub(lowerBound).mul(0.5f); }
     public KVec2 getSize() { return upperBound.sub(lowerBound); }

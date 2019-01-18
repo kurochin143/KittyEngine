@@ -1,6 +1,7 @@
 package KittyEngine.Graphics;
 
 import android.opengl.GLES31;
+import android.renderscript.Matrix4f;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -121,7 +122,7 @@ class KSpriteRenderer {
             new KVec4(1.f, 0.f, 0.f, 1.f), // TR
     };
 
-    private KRenderer m_renderer;
+    KRenderer m_renderer;
     private KShader m_shader;
     private KVertexBuffer m_vertexBuffer;
     // @TODO index buffer
@@ -179,7 +180,7 @@ class KSpriteRenderer {
 
         for (int i = 0; i < validSprites.size(); ++i) {
             KSprite sprite = validSprites.get(i);
-            addToVertexData(i * VERTEX_DATA_NUM, sprite, worldProjection);
+            addToVertexData(i * VERTEX_DATA_NUM * SPRITE_VERTEX_NUM, sprite, worldProjection);
         }
 
         GLES31.glEnable(GLES31.GL_BLEND); // allow blend function
@@ -220,7 +221,7 @@ class KSpriteRenderer {
 
         KTexture.bind();
 
-        GLES31.glDrawArrays(GLES31.GL_TRIANGLES, 0, SPRITE_VERTEX_NUM);
+        GLES31.glDrawArrays(GLES31.GL_TRIANGLES, 0, SPRITE_VERTEX_NUM * validSprites.size());
 
         KTexture.unbind();
 
@@ -257,16 +258,15 @@ class KSpriteRenderer {
         }
 
         // out of screen culling
-        boolean bNotCulled;
-        if (sprite.shouldCull()) {
-            // @TODO culling
-            KVec2 spriteSizeHalf = spriteSize.mul(0.5f);
-            float spriteWorldRadius = spriteSizeHalf.length();
-            KVec2 spritePosition = sprite.getPosition();
-            bNotCulled = CollisionStatics.circleAndCircle(spritePosition, spriteWorldRadius, cameraPosition, cameraWorldRadius);
-        }
-        else {
-            bNotCulled = true;
+        // cull by screen world radius and sprite world radius
+        KVec2 spriteSizeHalf = spriteSize.mul(0.5f);
+        float spriteWorldRadius = spriteSizeHalf.length();
+        KVec2 spritePosition = sprite.getPosition();
+        boolean bNotCulled = CollisionStatics.circleAndCircle(spritePosition, spriteWorldRadius, cameraPosition, cameraWorldRadius);
+
+        if (bNotCulled && sprite.shouldDrawScreenBounds()) {
+            KAABB spriteScreenAABB = sprite.computeScreenAABB();
+            m_renderer.getHUDRenderer().drawAABB(spriteScreenAABB, new KVec4(1.f), false, 1.f);
         }
 
         return bNotCulled;
@@ -288,7 +288,8 @@ class KSpriteRenderer {
         spriteModelMatrix.translate(position.x, position.y, 0.f);
 
         // rotate
-        spriteModelMatrix.rotate(angle, 0.f, 0.f, 1.f);
+        //spriteModelMatrix.rotate(angle, 0.f, 0.f, 1.f);
+        spriteModelMatrix.load(new Matrix4f(GLM.rotateZ(spriteModelMatrix.getArray(), angle)));
 
         // move the vertices by sizeHalf so that the origin is the center rather than the vertex
         // @NOTE: this should be done after rotate

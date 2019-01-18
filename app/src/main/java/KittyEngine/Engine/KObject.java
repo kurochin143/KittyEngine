@@ -16,6 +16,10 @@ public class KObject {
         return m_game;
     }
 
+    public int getGameObjectIndex() {
+        return m_gameObjectsIndex;
+    }
+
     /**
      * remove all engine reference of this object
      */

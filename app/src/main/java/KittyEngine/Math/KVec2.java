@@ -33,6 +33,13 @@ public class KVec2 {
         this.y = v.y;
     }
 
+    public float[] getAsFloatArray() {
+        float[] out = new float[2];
+        out[0] = x;
+        out[1] = y;
+        return out;
+    }
+
     public KVec2 add(KVec2 v) {
         return new KVec2(this.x + v.x, this.y + v.y);
     }
@@ -107,11 +114,8 @@ public class KVec2 {
         this.y /= scalar;
     }
 
-    public float[] getAsFloatArray() {
-        float[] out = new float[2];
-        out[0] = x;
-        out[1] = y;
-        return out;
+    public KVec2 neg() {
+        return new KVec2(-x, -y);
     }
 
     public KVec2 getNormalized() {

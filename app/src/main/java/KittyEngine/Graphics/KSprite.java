@@ -2,15 +2,13 @@ package KittyEngine.Graphics;
 
 import android.util.Log;
 
-import java.util.TreeMap;
-
 import KittyEngine.Container.KArrayList;
 import KittyEngine.Engine.KEngine;
-import KittyEngine.Engine.KGame;
+import KittyEngine.Math.KAABB;
 import KittyEngine.Math.KVec2;
 import KittyEngine.Math.KVec4;
 
-public class KSprite {
+public abstract class KSprite {
 
     public KSprite() {
         m_spriteRenderer = KEngine.get().getGLSurfaceView().getRenderer().getSpriteRenderer();
@@ -35,9 +33,8 @@ public class KSprite {
     private int m_SpriteArrayIndex;
 
     private boolean m_bHidden;
-    private boolean m_bCull = true;
-    private KVec2 m_position = new KVec2();
-    private float m_angle;
+    private boolean m_bShouldDrawScreenBounds;
+    private boolean m_bInScreenSpace;
     private KVec2 m_size = new KVec2(100.f);
     private KVec4 m_color = new KVec4(1.f);
     private KTexture m_texture;
@@ -55,34 +52,26 @@ public class KSprite {
         m_bHidden = bHidden;
     }
 
-    public boolean shouldCull() {
-        return m_bCull;
+    public boolean shouldDrawScreenBounds() {
+        return m_bShouldDrawScreenBounds;
     }
 
-    public void setShouldCull(boolean bCull) {
-        m_bCull = bCull;
+    public void setShouldDrawScreenBounds(boolean bShouldDrawScreenBounds) {
+        m_bShouldDrawScreenBounds = bShouldDrawScreenBounds;
     }
 
-    public KVec2 getPosition() {
-        return new KVec2(m_position);
-    }
+    public abstract KVec2 getPosition();
 
-    public void setPosition(KVec2 newPosition) {
-        m_position.set(newPosition);
-
+    public void positionUpdated() {
         if (isUsingSparseGrid()) {
             removeFromSparseGrid();
             addToSparseGrid();
         }
     }
 
-    public float getAngle() {
-        return m_angle;
-    }
+    public abstract float getAngle();
 
-    public void setAngle(float newAngle) {
-        m_angle = newAngle;
-
+    public void angleUpdated() {
         if (isUsingSparseGrid()) {
             removeFromSparseGrid();
             addToSparseGrid();
@@ -239,6 +228,68 @@ public class KSprite {
 
     private void removeFromSparseGrid() {
 
+    }
+
+    public KAABB computeScreenAABB() {
+        if (m_bInScreenSpace)
+        {
+            return computeWorldAABB();
+        }
+
+        KVec2 spritePosition = getPosition(); // world position
+        float spriteAngle = getAngle(); // world angle
+        KVec2 sizeHalf = m_size.mul(0.5f); // world size half
+
+        KAABB outAABB = new KAABB();
+        KCamera camera = m_spriteRenderer.m_renderer.getCamera();
+
+        KVec2 spriteScreenPosition = camera.convertWorldToScreen(spritePosition);
+        KVec2 sizeHalfScaled = sizeHalf.div(camera.getOrthoScale()); // sprite bounds get smaller when the camera zooms out vice versa
+        if (spriteAngle == 0.f || spriteAngle == 180.f)
+        {
+            outAABB.lowerBound = sizeHalfScaled.neg().add(spriteScreenPosition);
+            outAABB.upperBound = sizeHalfScaled.add(spriteScreenPosition);
+        }
+        else if (spriteAngle == 90.f || spriteAngle == 270.f)
+        {
+            KVec2 relativeUpperBound = new KVec2(sizeHalfScaled.y, sizeHalfScaled.x);
+            outAABB.lowerBound = relativeUpperBound.neg().add(spriteScreenPosition);
+            outAABB.upperBound = relativeUpperBound.add(spriteScreenPosition);
+        }
+        else
+        {
+            // set the lower and upper bound to the screen aabb center so that adding vector will expand the bounds outward
+            outAABB.set(spriteScreenPosition);
+            KVec2 relativeVertex_BR = sizeHalf.getRotated(spriteAngle);
+            KVec2 worldVertex_BR = relativeVertex_BR.add(spritePosition);
+            KVec2 vertex_BR_Screen = camera.convertWorldToScreen(worldVertex_BR);
+            KVec2 relativeVertex_BR_Screen = vertex_BR_Screen.sub(spriteScreenPosition);
+
+            outAABB.addSet(relativeVertex_BR_Screen.neg().add(spriteScreenPosition)); // top left
+            outAABB.addSet(vertex_BR_Screen); // bottom right
+            if (m_size.x == m_size.y) // square
+            {
+                outAABB.addSet(new KVec2(relativeVertex_BR_Screen.y, -relativeVertex_BR_Screen.x).add(spriteScreenPosition)); // top right
+                outAABB.addSet(new KVec2(-relativeVertex_BR_Screen.y, relativeVertex_BR_Screen.x).add(spriteScreenPosition)); // bottom left
+            }
+            else
+            {
+                KVec2 relativeVertex_BL = new KVec2(-sizeHalf.x, sizeHalf.y).getRotated(spriteAngle);
+                KVec2 worldVertex_BL = relativeVertex_BL.add(spritePosition);
+                KVec2 vertex_BL_Screen = camera.convertWorldToScreen(worldVertex_BL);
+                KVec2 relativeVertex_BL_Screen = vertex_BL_Screen.sub(spriteScreenPosition);
+
+                outAABB.addSet(relativeVertex_BL_Screen.neg().add(spriteScreenPosition)); // top right
+                outAABB.addSet(vertex_BL_Screen); // bottom left
+            }
+        }
+
+        return outAABB;
+    }
+
+    public KAABB computeWorldAABB() {
+        // @TODO
+        return new KAABB();
     }
 
 }

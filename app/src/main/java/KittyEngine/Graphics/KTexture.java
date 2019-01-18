@@ -6,27 +6,22 @@ import android.graphics.BitmapFactory;
 import android.opengl.GLES31;
 import android.util.Log;
 
-import com.example.israel.kittyengine.R;
-
-import java.io.File;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.jar.Attributes;
 
 import KittyEngine.Container.KArrayList;
-import KittyEngine.Engine.KEngine;
 import KittyEngine.Math.KVec2;
 import KittyEngine.Utilities.KFile;
 
 // @TODO implement dynamic texture loading
 // unfortunately, texture can only be created on the GL thread
 // load texture asynchronously. this will take long to implement because of texture array resizing
+/**
+ * As of now, texture can only be loaded before the engine starts
+ * All valid image files that are located in assets/textures and sub dirs are loaded on engine start
+ * Use KTexture.getTexture() to use the texture
+ * */
 public class KTexture {
     private KTexture(String name, int width, int height, int textureArrayIndex, int layer) {
         // @TODO lock this if we're gonna implement dynamic texture loading

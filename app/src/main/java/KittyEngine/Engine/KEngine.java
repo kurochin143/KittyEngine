@@ -4,12 +4,9 @@ import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-import java.util.Random;
-
 import KittyEngine.Container.KArrayList;
 import KittyEngine.Graphics.KGLSurfaceView;
 import KittyEngine.Graphics.KHUDRenderer;
-import KittyEngine.Graphics.KTexture;
 
 public class KEngine {
 

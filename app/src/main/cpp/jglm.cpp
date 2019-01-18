@@ -14,15 +14,13 @@ Java_glm_GLM_mat4MulVec4(
         jfloatArray inVec4) {
 
     jfloat* jMat4 = env->GetFloatArrayElements(inMat4, 0);
-    jfloat* jVec4 = env->GetFloatArrayElements(inVec4, 0);
-
     glm::mat4 mat4;
     std::memcpy(&mat4[0][0], jMat4, sizeof(mat4));
+    env->ReleaseFloatArrayElements(inMat4, jMat4, 0);
 
+    jfloat* jVec4 = env->GetFloatArrayElements(inVec4, 0);
     glm::vec4 vec4;
     std::memcpy(&vec4[0], jVec4, sizeof(vec4));
-
-    env->ReleaseFloatArrayElements(inMat4, jMat4, 0);
     env->ReleaseFloatArrayElements(inVec4, jVec4, 0);
 
     glm::vec4 outVec4 = mat4 * vec4;
@@ -86,6 +84,24 @@ Java_glm_GLM_lookAtRH(
 
     jfloatArray outArray = env->NewFloatArray(16);
     env->SetFloatArrayRegion(outArray, 0, 16, &outLookAtRH[0][0]);
+    return outArray;
+}
+
+extern "C" JNIEXPORT jfloatArray JNICALL
+Java_glm_GLM_rotateZ(
+        JNIEnv *env,
+        jobject /* this */,
+        jfloatArray inMat4,
+        jfloat inAngle) {
+    jfloat* jMat4 = env->GetFloatArrayElements(inMat4, 0);
+    glm::mat4 mat4;
+    std::memcpy(&mat4[0][0], jMat4, sizeof(mat4));
+    env->ReleaseFloatArrayElements(inMat4, jMat4, 0);
+
+    glm::mat4 outMat4 = glm::rotate(mat4, inAngle, glm::vec3(0.f, 0.f, 1.f));
+
+    jfloatArray outArray = env->NewFloatArray(16);
+    env->SetFloatArrayRegion(outArray, 0, 16, &outMat4[0][0]);
     return outArray;
 }
 
