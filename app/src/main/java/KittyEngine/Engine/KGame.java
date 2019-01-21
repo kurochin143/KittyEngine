@@ -44,4 +44,8 @@ public abstract class KGame {
         return m_objects;
     }
 
+    public KWorld2D getWorld() {
+        return m_world2D;
+    }
+
 }

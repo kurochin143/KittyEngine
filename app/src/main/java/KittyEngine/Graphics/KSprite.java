@@ -8,6 +8,8 @@ import KittyEngine.Math.KAABB;
 import KittyEngine.Math.KVec2;
 import KittyEngine.Math.KVec4;
 
+// @TODO sparse grid
+// @TODO screen space
 public abstract class KSprite {
 
     public KSprite() {

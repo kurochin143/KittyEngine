@@ -4,6 +4,7 @@ import KittyEngine.Engine.KGame;
 import KittyEngine.Engine.Physics.KSceneObject;
 import KittyEngine.Math.KVec2;
 
+/** Scene object with sprite */
 public class KSpriteObject extends KSceneObject {
 
     public KSpriteObject(KGame game) {
@@ -26,12 +27,12 @@ public class KSpriteObject extends KSceneObject {
     };
 
     @Override
-    protected void onPositionUpdated() {
+    protected void onPositionUpdated(boolean bFromRoot) {
         sprite.positionUpdated();
     }
 
     @Override
-    protected void onAngleUpdated() {
+    protected void onAngleUpdated(boolean bFromRoot) {
         sprite.angleUpdated();
     }
 }

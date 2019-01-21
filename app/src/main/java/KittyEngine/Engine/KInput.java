@@ -14,6 +14,7 @@ public class KInput {
     private Lock m_mutex_eventsAccess = new ReentrantLock();
 
     private boolean m_bMotionEvent_THREAD_UNSAFE;
+    // @TODO save all motion event, not just the last
     private MotionEvent m_lastMotionEvent_THREAD_UNSAFE;
     private KArrayList<MotionEventObject> m_motionEventListeners = new KArrayList<>();
 

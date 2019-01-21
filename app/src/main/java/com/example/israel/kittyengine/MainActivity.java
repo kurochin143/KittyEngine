@@ -10,6 +10,10 @@ import KittyGameTest.TGame;
 
 public class MainActivity extends AppCompatActivity {
 
+    static {
+        System.loadLibrary("native-lib");
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -17,10 +21,16 @@ public class MainActivity extends AppCompatActivity {
 
         //Log.i("KittyLogTest", "MainActivity thread: " + Thread.currentThread().getName()); // main is the name
 
+        // engine should only be created once
         KEngine newEngine = new KEngine(this);
         TGame newGame = new TGame();
         newEngine.addGame(newGame);
         newEngine.start();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
     public String readRaw(int id) {

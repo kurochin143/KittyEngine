@@ -4,6 +4,7 @@ import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.SurfaceHolder;
 
 import KittyEngine.Engine.KInput;
 
@@ -24,6 +25,11 @@ public class KGLSurfaceView extends GLSurfaceView {
 
         // only render when requestRender is called
         setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+    }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder h) {
+        super.surfaceDestroyed(h);
     }
 
     private KInput m_input;

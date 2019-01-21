@@ -28,14 +28,6 @@ Java_KittyEngine_Engine_Physics_KWorld2D_step
     world->Step(timeStep, velocityIterations, positionIterations);
 }
 
-extern "C" JNIEXPORT jlong JNICALL
-Java_KittyEngine_Engine_Physics_KWorld2D_getBodyList(JNIEnv *env, jobject /* this */, jlong worldPtr)
-{
-    b2World* world = reinterpret_cast<b2World*>(worldPtr);
-
-    return reinterpret_cast<jlong>(world->GetBodyList());
-}
-
 extern "C" JNIEXPORT jfloatArray JNICALL
 Java_KittyEngine_Engine_Physics_KWorld2D_getGravity(JNIEnv *env, jobject /* this */, jlong worldPtr)
 {
@@ -52,7 +44,7 @@ extern "C" JNIEXPORT jlong JNICALL
 Java_KittyEngine_Engine_Physics_KWorld2D_createBody
 (
         JNIEnv *env, jobject /* this */,
-        jlong worldPtr, jint physicsObjectGameIndex,
+        jlong worldPtr,
         jfloat positionX,
         jfloat positionY,
         jfloat angle,
@@ -70,7 +62,6 @@ Java_KittyEngine_Engine_Physics_KWorld2D_createBody
     b2World* world = reinterpret_cast<b2World*>(worldPtr);
 
     b2BodyDef bodyDef;
-    bodyDef.userData = new int(physicsObjectGameIndex);
     bodyDef.position.Set(positionX, positionY);
     bodyDef.angle = angle;
     bodyDef.linearVelocity.Set(linearVelocityX, linearVelocityY);
@@ -97,6 +88,13 @@ Java_KittyEngine_Engine_Physics_KWorld2D_destroyBody
     b2World* world = reinterpret_cast<b2World*>(worldPtr);
     b2Body* body = reinterpret_cast<b2Body*>(bodyPtr);
 
-    delete static_cast<int*>(body->GetUserData());
     world->DestroyBody(body);
+}
+
+extern "C" JNIEXPORT jlong JNICALL
+Java_KittyEngine_Engine_Physics_KWorld2D_getBodyList(JNIEnv *env, jobject /* this */, jlong worldPtr)
+{
+    b2World* world = reinterpret_cast<b2World*>(worldPtr);
+
+    return reinterpret_cast<jlong>(world->GetBodyList());
 }

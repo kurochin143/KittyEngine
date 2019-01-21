@@ -9,7 +9,8 @@ public class KFile {
     /**
      * get all files with extensions in the assets directory
      * @param dir starting from this directory.
-     *            first directory must be located in assets/.
+     *            first directory must be located in assets/
+     *            "assets/textures/etc" would be "textures/etc". all files under etc will be added
      *            empty string if starting in assets
      * @param files must be initialized
      */

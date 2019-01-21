@@ -33,6 +33,11 @@ public class KVec2 {
         this.y = v.y;
     }
 
+    public void set(float inX, float inY) {
+        this.x = inX;
+        this.y = inY;
+    }
+
     public float[] getAsFloatArray() {
         float[] out = new float[2];
         out[0] = x;

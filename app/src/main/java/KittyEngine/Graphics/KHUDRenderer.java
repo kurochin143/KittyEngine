@@ -16,6 +16,7 @@ import glm.GLM;
 
 // @TODO draw concave polygon
 // @TODO draw string. when font is implemented
+// @TODO use rendering with texture. Edit the bitmap and draw it as a single texture
 public class KHUDRenderer {
 
     KHUDRenderer(KRenderer renderer) {

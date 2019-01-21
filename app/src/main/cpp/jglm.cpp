@@ -114,12 +114,14 @@ Java_glm_GLM_mat4MulVec4v(
         jobject inVec4
         ) {
     jclass mat4cls = env->GetObjectClass(inMat4);
-    jfieldID mMatID = env->GetFieldID(mat4cls, "mMat", "[B");
-    jobject mMatInByteArray = env->GetObjectField(inMat4, mMatID);
-    jdoubleArray* mMat = reinterpret_cast<jdoubleArray*>(&mMatInByteArray);
+    jfieldID mMatID = env->GetFieldID(mat4cls, "mMat", "[F");
+    jobject jmMatObj = env->GetObjectField(inMat4, mMatID);
+    jfloatArray* jmMatFA = reinterpret_cast<jfloatArray*>(&jmMatObj);
+    jfloat* jmMatF = env->GetFloatArrayElements(*jmMatFA, 0);
 
     glm::mat4 mat4;
-    std::memcpy(&mat4[0][0], mMatInByteArray, sizeof(mat4));
+    std::memcpy(&mat4[0][0], jmMatF, sizeof(mat4));
+    env->ReleaseFloatArrayElements(*jmMatFA, jmMatF, 0);
 
     jclass vec4cls = env->GetObjectClass(inMat4);
     jfieldID vec4xID = env->GetFieldID(vec4cls, "x", "F");
